@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>تحداك - المتصدرين</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      padding: 25px 15px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 30px;
+    }
+
+    .player {
+      background: #1d1d1d;
+      margin: 10px 0;
+      padding: 18px;
+      border-radius: 15px;
+
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .rank {
+      font-size: 22px;
+      font-weight: bold;
+      width: 45px;
+    }
+
+    .name {
+      flex: 1;
+      font-size: 18px;
+    }
+
+    .score {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    .loading {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 18px;
+    }
+
+    .back {
+      display: block;
+      width: 100%;
+      box-sizing: border-box;
+
+      margin-top: 25px;
+      padding: 14px;
+
+      border: none;
+      border-radius: 12px;
+
+      background: #292929;
+      color: white;
+
+      font-size: 17px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .back:hover {
+      background: #3a3a3a;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>🏆 المتصدرين</h1>
+
+    <div id="leaderboard" class="loading">
+      جاري تحميل المتصدرين...
+    </div>
+
+    <a href="home.html" class="back">
+      🏠 العودة للرئيسية
+    </a>
+
+  </div>
+
+
+  <script type="module">
+
+    import { initializeApp }
+      from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      getDocs
+    } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCzLovBsbbmHYnTPYLdY1XVRws2oKnnfH",
+      authDomain: "tahaddak-852c1.firebaseapp.com",
+      projectId: "tahaddak-852c1",
+      storageBucket: "tahaddak-852c1.firebasestorage.app",
+      messagingSenderId: "518864619958",
+      appId: "1:518864619958:web:d91dc152134c9d81255917",
+      measurementId: "G-KQP0VXV27Q"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+
+    async function loadLeaderboard() {
+
+      const box = document.getElementById("leaderboard");
+
+      try {
+
+        const snapshot =
+          await getDocs(collection(db, "quizResults"));
+
+
+        let players = [];
+
+
+        snapshot.forEach((doc) => {
+
+          const data = doc.data();
+
+          players.push({
+
+            name: data.playerName || "لاعب",
+
+            score: Number(data.score) || 0,
+
+            total: Number(data.total) || 5,
+
+            time: Number(data.createdAt) || 0
+
+          });
+
+        });
+
+
+        // ترتيب اللاعبين
+        players.sort((a, b) => {
+
+          if (b.score !== a.score) {
+
+            return b.score - a.score;
+
+          }
+
+          return b.time - a.time;
+
+        });
+
+
+        // عرض أفضل 10 لاعبين
+        players = players.slice(0, 10);
+
+
+        if (players.length === 0) {
+
+          box.innerHTML =
+            "ما فيه نتائج للحين 😅";
+
+          return;
+
+        }
+
+
+        box.innerHTML = "";
+
+
+        players.forEach((player, index) => {
+
+          const div = document.createElement("div");
+
+          div.className = "player";
+
+
+          let medal = "";
+
+          if (index === 0) medal = "🥇";
+
+          if (index === 1) medal = "🥈";
+
+          if (index === 2) medal = "🥉";
+
+
+          div.innerHTML = `
+
+            <div class="rank">
+              ${medal || "#" + (index + 1)}
+            </div>
+
+            <div class="name">
+              ${player.name}
+            </div>
+
+            <div class="score">
+              ${player.score}/${player.total} 🔥
+            </div>
+
+          `;
+
+
+          box.appendChild(div);
+
+        });
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        box.innerHTML =
+          "صار خطأ في تحميل المتصدرين ❌";
+
+      }
+
+    }
+
+
+    loadLeaderboard();
+
+  </script>
+
+</body>
+
+</html>

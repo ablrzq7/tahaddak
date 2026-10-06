@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تحداك - التحديات</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #111;
+    color: white;
+    padding-bottom: 90px;
+}
+.app {
+    width: 90%;
+    max-width: 450px;
+    margin: auto;
+    padding: 30px 0;
+}
+h1 {
+    margin-bottom: 5px;
+}
+.subtitle {
+    color: #aaa;
+    margin-bottom: 25px;
+}
+.challenge {
+    background: #1d1d1d;
+    padding: 20px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+}
+.challenge h2 {
+    margin-top: 0;
+    font-size: 20px;
+}
+.challenge p {
+    color: #bbb;
+    line-height: 1.6;
+}
+.reward {
+    color: #ffd43b;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.complete {
+    width: 100%;
+    margin-top: 15px;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    background: white;
+    color: #111;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.complete:disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+}
+.message {
+    text-align: center;
+    color: #7cff8a;
+    font-weight: bold;
+    margin-top: 15px;
+}
+.nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 75px;
+    background: #1d1d1d;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+.nav button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+}
+.nav span {
+    display: block;
+    font-size: 22px;
+    margin-bottom: 3px;
+}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🎯 التحديات</h1>
+<div class="subtitle">
+اختر تحديًا وابدأ مذاكرتك 🔥
+</div>
+<!-- التحدي الأول -->
+<div class="challenge">
+<h2>📖 مذاكرة 30 دقيقة</h2>
+<p>
+ذاكر لمدة 30 دقيقة بدون استخدام الجوال.
+</p>
+<div class="reward">
++100 ⭐
+</div>
+<button
+class="complete"
+onclick="completeChallenge(100, this)">
+أنجزت التحدي ✅
+</button>
+</div>
+<!-- التحدي الثاني -->
+<div class="challenge">
+<h2>📝 حل 20 سؤال</h2>
+<p>
+حل 20 سؤال من أي مادة دراسية.
+</p>
+<div class="reward">
++150 ⭐
+</div>
+<button
+class="complete"
+onclick="completeChallenge(150, this)">
+أنجزت التحدي ✅
+</button>
+</div>
+<!-- التحدي الثالث -->
+<div class="challenge">
+<h2>🇬🇧 حفظ 10 كلمات إنجليزي</h2>
+<p>
+احفظ 10 كلمات إنجليزية جديدة مع معانيها.
+</p>
+<div class="reward">
++100 ⭐
+</div>
+<button
+class="complete"
+onclick="completeChallenge(100, this)">
+أنجزت التحدي ✅
+</button>
+</div>
+<!-- التحدي الرابع -->
+<div class="challenge">
+<h2>📚 مراجعة درس</h2>
+<p>
+راجع درسًا كاملًا وحاول تذكر أهم النقاط.
+</p>
+<div class="reward">
++200 ⭐
+</div>
+<button
+class="complete"
+onclick="completeChallenge(200, this)">
+أنجزت التحدي ✅
+</button>
+</div>
+<div
+class="message"
+id="message">
+</div>
+</div>
+<!-- شريط التنقل -->
+<div class="nav">
+<button onclick="goHome()">
+<span>🏠</span>
+الرئيسية
+</button>
+<button onclick="goChallenges()">
+<span>🎯</span>
+التحديات
+</button>
+<button onclick="goRanking()">
+<span>🏆</span>
+الترتيب
+</button>
+<button onclick="goProfile()">
+<span>👤</span>
+حسابي
+</button>
+</div>
+<script>
+/*
+حفظ النقاط الموجودة
+*/
+let points =
+Number(localStorage.getItem("points")) || 0;
+/*
+عدد التحديات المكتملة
+*/
+let completed =
+Number(localStorage.getItem("completed")) || 0;
+/*
+إنجاز التحدي
+*/
+function completeChallenge(reward, button) {
+    /*
+    إضافة النقاط
+    */
+    points += reward;
+    /*
+    زيادة عدد التحديات
+    */
+    completed += 1;
+    /*
+    حفظ البيانات
+    */
+    localStorage.setItem(
+        "points",
+        points
+    );
+    localStorage.setItem(
+        "completed",
+        completed
+    );
+    /*
+    تعطيل الزر
+    */
+    button.disabled = true;
+    button.textContent =
+        "تم الإنجاز ✅";
+    /*
+    رسالة النجاح
+    */
+    document.getElementById("message").textContent =
+        "كفو! حصلت على +" + reward + " ⭐";
+    /*
+    إزالة الرسالة بعد فترة
+    */
+    setTimeout(function() {
+        document.getElementById("message").textContent =
+            "";
+    }, 3000);
+}
+/*
+التنقل
+*/
+function goHome() {
+    window.location.href =
+        "home.html";
+}
+function goChallenges() {
+    window.location.href =
+        "challenges.html";
+}
+function goRanking() {
+    window.location.href =
+        "ranking.html";
+}
+function goProfile() {
+    window.location.href =
+        "profile.html";
+}
+</script>
+</body>
+</html>

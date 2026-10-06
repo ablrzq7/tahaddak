@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحداك</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #111;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app {
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #aaa;
+            font-size: 18px;
+        }
+
+        button {
+            margin-top: 30px;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 14px;
+            background: white;
+            color: #111;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app">
+        <h1>تحداك 🏆</h1>
+        <p>تحديات يومية بينك وبين خويانك</p>
+
+        <button onclick="startApp()">ابدأ</button>
+    </div>
+
+    <script>
+     function startApp() {
+    window.location.href = "home.html";
+}
+    </script>
+
+</body>
+</html>

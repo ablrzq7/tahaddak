@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الأصدقاء - تحداك</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #0b0b0f;
+            color: white;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .box {
+            background: #17171d;
+            padding: 20px;
+            border-radius: 18px;
+            margin: 18px 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 12px;
+            background: #25252d;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: 0;
+            border-radius: 12px;
+            background: white;
+            color: #111;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .code {
+            background: #25252d;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 25px;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+
+        .player,
+        .friend {
+            background: #25252d;
+            padding: 15px;
+            border-radius: 14px;
+            margin-top: 10px;
+        }
+
+        .add {
+            margin-top: 10px;
+        }
+
+        .delete {
+            margin-top: 10px;
+            background: #3a2020;
+            color: white;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 12px;
+            color: #aaa;
+        }
+
+        .back {
+            background: #25252d;
+            color: white;
+        }
+
+        /* نافذة الاسم */
+        #namePopup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 999;
+        }
+
+        .popup {
+            width: 100%;
+            max-width: 400px;
+            background: #17171d;
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+        }
+
+        #nameError {
+            color: #ff7777;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- نافذة اختيار الاسم -->
+<div id="namePopup">
+
+    <div class="popup">
+
+        <h2>🎮 حياك في تحداك</h2>
+
+        <p>
+            اكتب اسمك اللي بيظهر للاعبين
+        </p>
+
+        <input
+            id="nameInput"
+            type="text"
+            maxlength="20"
+            placeholder="مثال: أبو حمود"
+        >
+
+        <button onclick="saveName()">
+            دخول 🚀
+        </button>
+
+        <div id="nameError"></div>
+
+    </div>
+
+</div>
+
+
+<div class="container">
+
+    <h1>👥 الأصدقاء</h1>
+
+    <div class="box">
+
+        <h2>🎮 كودك</h2>
+
+        <p>
+            شارك الكود مع خويك.
+        </p>
+
+        <div class="code" id="myCode">
+            ...
+        </div>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>👤 اسمك</h2>
+
+        <div id="myName">
+            جاري التحميل...
+        </div>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>➕ إضافة صديق</h2>
+
+        <input
+            id="friendCode"
+            type="text"
+            inputmode="numeric"
+            maxlength="6"
+            placeholder="اكتب كود صديقك"
+        >
+
+        <button onclick="addFriend()">
+            إضافة صديق
+        </button>
+
+        <div id="message"></div>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>🎮 اللاعبين</h2>
+
+        <div id="playersList">
+            جاري تحميل اللاعبين...
+        </div>
+
+    </div>
+
+
+    <div class="box">
+
+        <h2>🏆 أصدقائي</h2>
+
+        <div id="friendsList">
+            جاري التحميل...
+        </div>
+
+    </div>
+
+
+    <button
+        class="back"
+        onclick="location.href='home.html'"
+    >
+        ← العودة للرئيسية
+    </button>
+
+</div>
+
+
+<script type="module">
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    query,
+    where,
+    updateDoc
+} from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+
+/* =========================
+   Firebase
+========================= */
+
+const firebaseConfig = {
+
+    apiKey: "AIzaSyCzLovBsbbmHYnTPYLdY1XVRws2oKnnFhI",
+
+    authDomain: "tahaddak-852c1.firebaseapp.com",
+
+    projectId: "tahaddak-852c1",
+
+    storageBucket: "tahaddak-852c1.firebasestorage.app",
+
+    messagingSenderId: "518864619958",
+
+    appId: "1:518864619958:web:d91dc152134c9d81255917",
+
+    measurementId: "G-KQP0VXV27Q"
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+/* =========================
+   كود اللاعب
+========================= */
+
+let playerCode =
+    localStorage.getItem("playerCode");
+
+
+if (!playerCode) {
+
+    playerCode =
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        ).toString();
+
+    localStorage.setItem(
+        "playerCode",
+        playerCode
+    );
+}
+
+
+document.getElementById(
+    "myCode"
+).textContent = playerCode;
+
+
+/* =========================
+   الاسم
+========================= */
+
+let playerName =
+    localStorage.getItem("playerName");
+
+
+if (playerName) {
+
+    document.getElementById(
+        "namePopup"
+    ).style.display = "none";
+
+}
+
+
+/* حفظ الاسم */
+
+window.saveName =
+    async function () {
+
+        const input =
+            document.getElementById(
+                "nameInput"
+            );
+
+        const error =
+            document.getElementById(
+                "nameError"
+            );
+
+        const name =
+            input.value.trim();
+
+
+        if (!name) {
+
+            error.textContent =
+                "اكتب اسمك أول.";
+
+            return;
+        }
+
+
+        if (name.length < 2) {
+
+            error.textContent =
+                "الاسم لازم يكون حرفين أو أكثر.";
+
+            return;
+        }
+
+
+        playerName = name;
+
+
+        localStorage.setItem(
+            "playerName",
+            playerName
+        );
+
+
+        document.getElementById(
+            "namePopup"
+        ).style.display = "none";
+
+
+        await registerPlayer();
+
+        await loadPlayers();
+
+        await loadFriends();
+
+    };
+
+
+/* =========================
+   تسجيل اللاعب
+========================= */
+
+async function registerPlayer() {
+
+    try {
+
+        const playersRef =
+            collection(
+                db,
+                "players"
+            );
+
+
+        const playerQuery =
+            query(
+                playersRef,
+
+                where(
+                    "code",
+                    "==",
+                    playerCode
+                )
+            );
+
+
+        const result =
+            await getDocs(
+                playerQuery
+            );
+
+
+        if (result.empty) {
+
+            await addDoc(
+                playersRef,
+                {
+
+                    code:
+                        playerCode,
+
+                    name:
+                        playerName,
+
+                    points:
+                        0,
+
+                    streak:
+                        0,
+
+                    createdAt:
+                        Date.now()
+
+                }
+            );
+
+        } else {
+
+            const playerDoc =
+                result.docs[0];
+
+
+            await updateDoc(
+                doc(
+                    db,
+                    "players",
+                    playerDoc.id
+                ),
+                {
+                    name:
+                        playerName
+                }
+            );
+
+        }
+
+
+        document.getElementById(
+            "myName"
+        ).textContent =
+            "👤 " + playerName;
+
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================
+   إضافة صديق
+========================= */
+
+window.addFriend =
+    async function () {
+
+        const code =
+            document
+                .getElementById(
+                    "friendCode"
+                )
+                .value
+                .trim();
+
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        if (!code) {
+
+            message.textContent =
+                "اكتب كود الصديق.";
+
+            return;
+        }
+
+
+        if (code === playerCode) {
+
+            message.textContent =
+                "😅 ما تقدر تضيف نفسك.";
+
+            return;
+        }
+
+
+        try {
+
+            const playersRef =
+                collection(
+                    db,
+                    "players"
+                );
+
+
+            const playerQuery =
+                query(
+                    playersRef,
+
+                    where(
+                        "code",
+                        "==",
+                        code
+                    )
+                );
+
+
+            const playerResult =
+                await getDocs(
+                    playerQuery
+                );
+
+
+            if (playerResult.empty) {
+
+                message.textContent =
+                    "❌ هذا الكود غير موجود.";
+
+                return;
+            }
+
+
+            const playerData =
+                playerResult
+                    .docs[0]
+                    .data();
+
+
+            const friendsRef =
+                collection(
+                    db,
+                    "friends"
+                );
+
+
+            const alreadyFriend =
+                query(
+                    friendsRef,
+
+                    where(
+                        "ownerCode",
+                        "==",
+                        playerCode
+                    ),
+
+                    where(
+                        "friendCode",
+                        "==",
+                        code
+                    )
+                );
+
+
+            const existing =
+                await getDocs(
+                    alreadyFriend
+                );
+
+
+            if (!existing.empty) {
+
+                message.textContent =
+                    "ℹ️ هذا اللاعب مضاف عندك بالفعل.";
+
+                return;
+            }
+
+
+            await addDoc(
+                friendsRef,
+                {
+
+                    ownerCode:
+                        playerCode,
+
+                    friendCode:
+                        code,
+
+                    name:
+                        playerData.name,
+
+                    points:
+                        playerData.points || 0,
+
+                    streak:
+                        playerData.streak || 0,
+
+                    createdAt:
+                        Date.now()
+
+                }
+            );
+
+
+            message.textContent =
+                "✅ تمت إضافة " +
+                playerData.name;
+
+
+            document
+                .getElementById(
+                    "friendCode"
+                )
+                .value = "";
+
+
+            loadFriends();
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            message.textContent =
+                "❌ صار خطأ.";
+
+        }
+
+    };
+
+
+/* =========================
+   اللاعبين
+========================= */
+
+async function loadPlayers() {
+
+    const list =
+        document.getElementById(
+            "playersList"
+        );
+
+
+    list.innerHTML =
+        "جاري تحميل اللاعبين...";
+
+
+    try {
+
+        const snapshot =
+            await getDocs(
+                collection(
+                    db,
+                    "players"
+                )
+            );
+
+
+        list.innerHTML = "";
+
+
+        snapshot.forEach(
+            (playerDoc) => {
+
+                const data =
+                    playerDoc.data();
+
+
+                if (
+                    data.code ===
+                    playerCode
+                ) {
+
+                    return;
+
+                }
+
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "player";
+
+
+                div.innerHTML = `
+
+                    <strong>
+                        👤 ${data.name}
+                    </strong>
+
+                    <br><br>
+
+                    🎮 الكود:
+                    ${data.code}
+
+                    <br>
+
+                    ⭐ النقاط:
+                    ${data.points || 0}
+
+                    <br>
+
+                    🔥 الستريك:
+                    ${data.streak || 0}
+
+                    <br><br>
+
+                    <button class="add">
+                        ➕ إضافة صديق
+                    </button>
+
+                `;
+
+
+                div.querySelector(
+                    ".add"
+                ).onclick =
+                    function () {
+
+                        document
+                            .getElementById(
+                                "friendCode"
+                            )
+                            .value =
+                            data.code;
+
+
+                        addFriend();
+
+                    };
+
+
+                list.appendChild(div);
+
+            }
+        );
+
+
+        if (!list.innerHTML) {
+
+            list.innerHTML =
+                "ما فيه لاعبين غيرك للحين 👀";
+
+        }
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "❌ تعذر تحميل اللاعبين.";
+
+    }
+
+}
+
+
+/* =========================
+   الأصدقاء
+========================= */
+
+async function loadFriends() {
+
+    const list =
+        document.getElementById(
+            "friendsList"
+        );
+
+
+    list.innerHTML =
+        "جاري التحميل...";
+
+
+    try {
+
+        const friendsRef =
+            collection(
+                db,
+                "friends"
+            );
+
+
+        const friendQuery =
+            query(
+                friendsRef,
+
+                where(
+                    "ownerCode",
+                    "==",
+                    playerCode
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(
+                friendQuery
+            );
+
+
+        list.innerHTML = "";
+
+
+        if (snapshot.empty) {
+
+            list.innerHTML =
+                "ما عندك أصدقاء للحين 👀";
+
+            return;
+        }
+
+
+        snapshot.forEach(
+            (friendDoc) => {
+
+                const data =
+                    friendDoc.data();
+
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                div.className =
+                    "friend";
+
+
+                div.innerHTML = `
+
+                    <strong>
+                        👤 ${data.name}
+                    </strong>
+
+                    <br><br>
+
+                    🎮 الكود:
+                    ${data.friendCode}
+
+                    <br>
+
+                    ⭐ النقاط:
+                    ${data.points || 0}
+
+                    <br>
+
+                    🔥 الستريك:
+                    ${data.streak || 0}
+
+                    <br><br>
+
+                    <button class="delete">
+                        حذف الصديق
+                    </button>
+
+                `;
+
+
+                div.querySelector(
+                    ".delete"
+                ).onclick =
+                    async function () {
+
+                        await deleteDoc(
+                            doc(
+                                db,
+                                "friends",
+                                friendDoc.id
+                            )
+                        );
+
+
+                        loadFriends();
+
+                    };
+
+
+                list.appendChild(div);
+
+            }
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        list.innerHTML =
+            "❌ تعذر تحميل الأصدقاء.";
+
+    }
+
+}
+
+
+/* =========================
+   تشغيل
+========================= */
+
+if (playerName) {
+
+    registerPlayer();
+
+    loadPlayers();
+
+    loadFriends();
+
+}
+
+</script>
+
+</body>
+</html>

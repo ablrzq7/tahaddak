@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+<title>الملف الشخصي - تحداك</title>
+<style>
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+body{
+    margin:0;
+    background:#0b0b0f;
+    color:white;
+    padding:20px;
+}
+.container{
+    max-width:500px;
+    margin:auto;
+}
+/* العنوان */
+.header{
+    text-align:center;
+    margin-bottom:22px;
+    animation:fadeDown .5s ease;
+}
+.header h1{
+    margin:0;
+    font-size:30px;
+}
+.header p{
+    color:#888;
+    margin-top:8px;
+}
+/* بطاقة اللاعب */
+.playerCard{
+    background:#17171d;
+    border-radius:22px;
+    padding:25px;
+    text-align:center;
+    margin-bottom:15px;
+    animation:fadeUp .5s ease;
+}
+.avatar{
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    background:#25252d;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    margin:0 auto 15px;
+}
+.playerName{
+    font-size:24px;
+    font-weight:bold;
+}
+.rank{
+    display:inline-block;
+    margin-top:10px;
+    background:#25252d;
+    padding:8px 18px;
+    border-radius:30px;
+    color:#ddd;
+}
+/* الإحصائيات */
+.stats{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-bottom:15px;
+}
+.stat{
+    background:#17171d;
+    border-radius:18px;
+    padding:20px 10px;
+    text-align:center;
+    animation:pop .5s ease;
+}
+.statIcon{
+    font-size:25px;
+}
+.statValue{
+    font-size:25px;
+    font-weight:bold;
+    margin-top:8px;
+}
+.statTitle{
+    color:#888;
+    font-size:13px;
+    margin-top:5px;
+}
+/* البيانات */
+.box{
+    background:#17171d;
+    padding:20px;
+    border-radius:18px;
+    margin-bottom:15px;
+}
+.box h2{
+    margin-top:0;
+}
+/* الاسم */
+input{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    margin-bottom:10px;
+    background:#25252d;
+    color:white;
+    font-size:16px;
+    outline:none;
+}
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:12px;
+    background:white;
+    color:#111;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    transition:.2s;
+}
+button:active{
+    transform:scale(.97);
+}
+.info{
+    line-height:2;
+    color:#ddd;
+}
+/* الكود */
+.code{
+    background:#25252d;
+    padding:14px;
+    border-radius:12px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+    letter-spacing:4px;
+    margin-top:10px;
+}
+/* الإنجاز */
+.achievement{
+    background:#17170f;
+    border:1px solid #665f20;
+    padding:18px;
+    border-radius:18px;
+    margin-bottom:15px;
+}
+.achievementTitle{
+    font-size:18px;
+    font-weight:bold;
+}
+.achievementText{
+    color:#aaa;
+    margin-top:7px;
+}
+/* الرسالة */
+#message{
+    text-align:center;
+    margin-top:12px;
+    color:#aaa;
+}
+/* الأزرار */
+.refresh{
+    background:#25252d;
+    color:white;
+    margin-bottom:10px;
+}
+.back{
+    background:#25252d;
+    color:white;
+}
+/* الحركات */
+@keyframes fadeDown{
+    from{
+        opacity:0;
+        transform:translateY(-20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+@keyframes pop{
+    from{
+        opacity:0;
+        transform:scale(.9);
+    }
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <!-- العنوان -->
+    <div class="header">
+        <h1>👤 ملفي</h1>
+        <p>
+            معلوماتك وإحصائياتك في تحداك
+        </p>
+    </div>
+    <!-- بطاقة اللاعب -->
+    <div class="playerCard">
+        <div class="avatar">
+            🎮
+        </div>
+        <div
+            class="playerName"
+            id="displayName">
+            لاعب
+        </div>
+        <div
+            class="rank"
+            id="rank">
+            🥉 مبتدئ
+        </div>
+    </div>
+    <!-- الإحصائيات -->
+    <div class="stats">
+        <div class="stat">
+            <div class="statIcon">
+                ⭐
+            </div>
+            <div
+                class="statValue"
+                id="points">
+                0
+            </div>
+            <div class="statTitle">
+                النقاط
+            </div>
+        </div>
+        <div class="stat">
+            <div class="statIcon">
+                🔥
+            </div>
+            <div
+                class="statValue"
+                id="streak">
+                0
+            </div>
+            <div class="statTitle">
+                الستريك
+            </div>
+        </div>
+        <div class="stat">
+            <div class="statIcon">
+                🎯
+            </div>
+            <div
+                class="statValue"
+                id="completed">
+                0
+            </div>
+            <div class="statTitle">
+                الاختبارات
+            </div>
+        </div>
+        <div class="stat">
+            <div class="statIcon">
+                🏆
+            </div>
+            <div
+                class="statValue"
+                id="perfect">
+                0
+            </div>
+            <div class="statTitle">
+                درجات كاملة
+            </div>
+        </div>
+    </div>
+    <!-- الإنجاز -->
+    <div
+        class="achievement"
+        id="achievement"
+        style="display:none;">
+        <div class="achievementTitle">
+            🏆 أسطورة التحدي
+        </div>
+        <div class="achievementText">
+            حصلت على درجة كاملة 10/10!
+        </div>
+    </div>
+    <!-- تعديل الاسم -->
+    <div class="box">
+        <h2>
+            ✏️ اسم اللاعب
+        </h2>
+        <input
+            id="playerName"
+            type="text"
+            placeholder="اكتب اسمك"
+            maxlength="20">
+        <button
+            onclick="saveProfile()">
+            حفظ البيانات
+        </button>
+        <div id="message"></div>
+    </div>
+    <!-- كود اللاعب -->
+    <div class="box">
+        <h2>
+            🎮 كود اللاعب
+        </h2>
+        <div
+            class="code"
+            id="playerCode">
+            ...
+        </div>
+    </div>
+    <!-- أزرار -->
+    <button
+        class="refresh"
+        onclick="refreshStats()">
+        🔄 تحديث الإحصائيات
+    </button>
+    <button
+        class="back"
+        onclick="location.href='home.html'">
+        ← العودة للرئيسية
+    </button>
+</div>
+<script type="module">
+import {
+    initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import {
+    getFirestore,
+    collection,
+    query,
+    where,
+    getDocs,
+    addDoc
+}
+from
+"https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+/* Firebase */
+const firebaseConfig = {
+    apiKey:
+    "AIzaSyCzLovBsbbmHYnTPYLdY1XVRws2oKnnfH",
+    authDomain:
+    "tahaddak-852c1.firebaseapp.com",
+    projectId:
+    "tahaddak-852c1",
+    storageBucket:
+    "tahaddak-852c1.firebasestorage.app",
+    messagingSenderId:
+    "518864619958",
+    appId:
+    "1:518864619958:web:d91dc152134c9d81255917",
+    measurementId:
+    "G-KQP0VXV27Q"
+};
+const app =
+    initializeApp(firebaseConfig);
+const db =
+    getFirestore(app);
+/* كود اللاعب */
+let playerCode =
+    localStorage.getItem("playerCode");
+if(!playerCode){
+    playerCode =
+        Math.floor(
+            100000 +
+            Math.random() * 900000
+        ).toString();
+    localStorage.setItem(
+        "playerCode",
+        playerCode
+    );
+}
+document.getElementById(
+    "playerCode"
+).textContent = playerCode;
+/* تحميل البيانات */
+function loadStats(){
+    const name =
+        localStorage.getItem(
+            "playerName"
+        ) || "لاعب";
+    const points =
+        Number(
+            localStorage.getItem("points")
+        ) || 0;
+    const streak =
+        Number(
+            localStorage.getItem("streak")
+        ) || 0;
+    const completed =
+        Number(
+            localStorage.getItem("completed")
+        ) || 0;
+    const perfect =
+        localStorage.getItem(
+            "perfectQuiz"
+        ) === "yes" ? 1 : 0;
+    document.getElementById(
+        "playerName"
+    ).value = name;
+    document.getElementById(
+        "displayName"
+    ).textContent = name;
+    document.getElementById(
+        "points"
+    ).textContent = points;
+    document.getElementById(
+        "streak"
+    ).textContent = streak;
+    document.getElementById(
+        "completed"
+    ).textContent = completed;
+    document.getElementById(
+        "perfect"
+    ).textContent = perfect;
+    /* الرتبة */
+    let rank = "🥉 مبتدئ";
+    if(points >= 100){
+        rank = "🥈 محترف";
+    }
+    if(points >= 300){
+        rank = "🥇 متقدم";
+    }
+    if(points >= 500){
+        rank = "👑 أسطورة";
+    }
+    document.getElementById(
+        "rank"
+    ).textContent = rank;
+    /* الإنجاز */
+    if(perfect){
+        document.getElementById(
+            "achievement"
+        ).style.display = "block";
+    }
+}
+/* حفظ الملف */
+window.saveProfile =
+async function(){
+    const name =
+        document.getElementById(
+            "playerName"
+        ).value.trim();
+    const message =
+        document.getElementById(
+            "message"
+        );
+    if(!name){
+        message.textContent =
+            "اكتب اسمك أولاً.";
+        return;
+    }
+    localStorage.setItem(
+        "playerName",
+        name
+    );
+    loadStats();
+    try{
+        const playersRef =
+            collection(
+                db,
+                "players"
+            );
+        const playerQuery =
+            query(
+                playersRef,
+                where(
+                    "code",
+                    "==",
+                    playerCode
+                )
+            );
+        const result =
+            await getDocs(
+                playerQuery
+            );
+        const points =
+            Number(
+                localStorage.getItem(
+                    "points"
+                )
+            ) || 0;
+        const streak =
+            Number(
+                localStorage.getItem(
+                    "streak"
+                )
+            ) || 0;
+        if(result.empty){
+            await addDoc(
+                playersRef,
+                {
+                    code:
+                        playerCode,
+                    name:
+                        name,
+                    points:
+                        points,
+                    streak:
+                        streak,
+                    createdAt:
+                        Date.now()
+                }
+            );
+        }
+        message.textContent =
+            "✅ تم حفظ بياناتك";
+    }
+    catch(error){
+        console.error(error);
+        message.textContent =
+            "❌ حدث خطأ أثناء الحفظ.";
+    }
+};
+/* تحديث */
+window.refreshStats =
+function(){
+    loadStats();
+    const message =
+        document.getElementById(
+            "message"
+        );
+    message.textContent =
+        "🔄 تم تحديث الإحصائيات";
+};
+/* تشغيل */
+loadStats();
+</script>
+</body>
+</html>

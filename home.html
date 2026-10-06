@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>تحداك - الرئيسية</title>
+
+
+<style>
+
+/* =========================
+   الأساسيات
+========================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    font-family: Arial, sans-serif;
+
+    background: #111;
+
+    color: white;
+
+    padding-bottom: 100px;
+
+}
+
+
+/* =========================
+   التطبيق
+========================= */
+
+.app {
+
+    width: 90%;
+
+    max-width: 450px;
+
+    margin: auto;
+
+    padding: 30px 0;
+
+}
+
+
+/* =========================
+   العنوان
+========================= */
+
+h1 {
+
+    margin-bottom: 5px;
+
+    animation: fadeDown 0.6s ease;
+
+}
+
+.subtitle {
+
+    color: #aaa;
+
+    margin-bottom: 25px;
+
+    animation: fadeDown 0.7s ease;
+
+}
+
+
+/* =========================
+   الإحصائيات
+========================= */
+
+.stats {
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+
+    margin-bottom: 25px;
+
+}
+
+.stat {
+
+    background: #1d1d1d;
+
+    padding: 18px;
+
+    border-radius: 18px;
+
+    text-align: center;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+
+    animation: fadeUp 0.6s ease;
+
+}
+
+.stat:active {
+
+    transform: scale(0.96);
+
+    background: #252525;
+
+}
+
+.stat-number {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    margin-top: 8px;
+
+}
+
+
+/* =========================
+   التحدي
+========================= */
+
+.challenge {
+
+    background: #1d1d1d;
+
+    padding: 20px;
+
+    border-radius: 18px;
+
+    animation: fadeUp 0.8s ease;
+
+}
+
+.challenge h2 {
+
+    margin-top: 0;
+
+}
+
+.challenge p {
+
+    color: #bbb;
+
+    line-height: 1.6;
+
+}
+
+.reward {
+
+    color: #ffd43b;
+
+    font-weight: bold;
+
+    margin-top: 10px;
+
+}
+
+
+/* =========================
+   زر الإنجاز
+========================= */
+
+.complete {
+
+    width: 100%;
+
+    margin-top: 15px;
+
+    padding: 14px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: white;
+
+    color: #111;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.2s ease;
+
+}
+
+.complete:active {
+
+    transform: scale(0.96);
+
+}
+
+.complete:disabled {
+
+    background: #555;
+
+    color: #aaa;
+
+}
+
+
+/* =========================
+   رسالة الإنجاز
+========================= */
+
+.message {
+
+    text-align: center;
+
+    color: #7cff8a;
+
+    font-weight: bold;
+
+    margin-top: 15px;
+
+    animation: pop 0.35s ease;
+
+}
+
+
+/* =========================
+   زر الأصدقاء
+========================= */
+
+.friends-button {
+
+    width: 100%;
+
+    margin-top: 18px;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 15px;
+
+    background: #1d1d1d;
+
+    color: white;
+
+    font-size: 17px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        background 0.2s ease;
+
+    animation: fadeUp 1s ease;
+
+}
+
+.friends-button:active {
+
+    transform: scale(0.96);
+
+    background: #292929;
+
+}
+
+
+/* =========================
+   شريط التنقل
+========================= */
+
+.nav {
+
+    position: fixed;
+
+    bottom: 0;
+
+    left: 0;
+
+    right: 0;
+
+    height: 75px;
+
+    background: #1d1d1d;
+
+    display: flex;
+
+    justify-content: space-around;
+
+    align-items: center;
+
+    box-shadow:
+        0 -5px 20px rgba(0,0,0,0.25);
+
+}
+
+.nav button {
+
+    background: none;
+
+    border: none;
+
+    color: white;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.15s ease,
+        opacity 0.15s ease;
+
+}
+
+.nav button:active {
+
+    transform: scale(0.85);
+
+    opacity: 0.7;
+
+}
+
+.nav span {
+
+    display: block;
+
+    font-size: 22px;
+
+    margin-bottom: 3px;
+
+}
+
+
+/* =========================
+   الحركات
+========================= */
+
+@keyframes fadeDown {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(-15px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+@keyframes fadeUp {
+
+    from {
+
+        opacity: 0;
+
+        transform: translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: translateY(0);
+
+    }
+
+}
+
+
+@keyframes pop {
+
+    0% {
+
+        opacity: 0;
+
+        transform: scale(0.8);
+
+    }
+
+    100% {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="app">
+
+
+<h1 id="welcome">
+هلا 👋
+</h1>
+
+
+<div class="subtitle">
+جاهز تتحدى خويانك؟ 🔥
+</div>
+
+
+<!-- الإحصائيات -->
+
+<div class="stats">
+
+
+<div class="stat">
+
+⭐ النقاط
+
+<div
+class="stat-number"
+id="points">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+🔥 المتتالية
+
+<div
+class="stat-number"
+id="streak">
+
+0
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+🏆 الترتيب
+
+<div
+class="stat-number">
+
+#1
+
+</div>
+
+</div>
+
+
+<div class="stat">
+
+✅ مكتملة
+
+<div
+class="stat-number"
+id="completed">
+
+0
+
+</div>
+
+</div>
+
+
+</div>
+
+
+<!-- التحدي اليومي -->
+
+<div class="challenge">
+
+<h2>
+🎯 التحدي اليومي
+</h2>
+
+
+<p>
+ذاكر لمدة 30 دقيقة بدون استخدام الجوال.
+</p>
+
+
+<div class="reward">
++100 ⭐
+</div>
+
+
+<button
+class="complete"
+id="dailyButton"
+onclick="completeDailyChallenge()">
+
+أنجزت التحدي ✅
+
+</button>
+
+
+<div
+class="message"
+id="message">
+
+</div>
+
+</div>
+
+
+<!-- الأصدقاء -->
+
+<button
+class="friends-button"
+onclick="goFriends()">
+
+👥 الأصدقاء
+
+</button>
+
+
+</div>
+
+
+<!-- شريط التنقل -->
+
+<div class="nav">
+
+
+<button onclick="goHome()">
+
+<span>🏠</span>
+
+الرئيسية
+
+</button>
+
+
+<button onclick="goChallenges()">
+
+<span>🎯</span>
+
+التحديات
+
+</button>
+
+
+<button onclick="goRanking()">
+
+<span>🏆</span>
+
+الترتيب
+
+</button>
+
+
+<button onclick="goProfile()">
+
+<span>👤</span>
+
+حسابي
+
+</button>
+
+
+</div>
+
+
+<script>
+
+/* =========================
+   اسم اللاعب
+========================= */
+
+let playerName =
+localStorage.getItem("playerName");
+
+
+if (playerName) {
+
+    document.getElementById(
+        "welcome"
+    ).textContent =
+        "هلا " + playerName + " 👋";
+
+}
+
+
+/* =========================
+   البيانات
+========================= */
+
+let points =
+Number(
+    localStorage.getItem("points")
+) || 0;
+
+
+let streak =
+Number(
+    localStorage.getItem("streak")
+) || 0;
+
+
+let completed =
+Number(
+    localStorage.getItem("completed")
+) || 0;
+
+
+/* =========================
+   عرض البيانات
+========================= */
+
+document.getElementById(
+    "points"
+).textContent = points;
+
+
+document.getElementById(
+    "streak"
+).textContent = streak;
+
+
+document.getElementById(
+    "completed"
+).textContent = completed;
+
+
+/* =========================
+   التحدي اليومي
+========================= */
+
+let todayChallenge =
+localStorage.getItem(
+    "todayChallenge"
+);
+
+
+if (todayChallenge === "yes") {
+
+    let button =
+        document.getElementById(
+            "dailyButton"
+        );
+
+    button.disabled = true;
+
+    button.textContent =
+        "تم إنجاز التحدي ✅";
+
+}
+
+
+/* =========================
+   إنجاز التحدي
+========================= */
+
+function completeDailyChallenge() {
+
+    points += 100;
+
+    streak += 1;
+
+    completed += 1;
+
+
+    localStorage.setItem(
+        "points",
+        points
+    );
+
+
+    localStorage.setItem(
+        "streak",
+        streak
+    );
+
+
+    localStorage.setItem(
+        "completed",
+        completed
+    );
+
+
+    localStorage.setItem(
+        "todayChallenge",
+        "yes"
+    );
+
+
+    document.getElementById(
+        "points"
+    ).textContent = points;
+
+
+    document.getElementById(
+        "streak"
+    ).textContent = streak;
+
+
+    document.getElementById(
+        "completed"
+    ).textContent = completed;
+
+
+    let button =
+        document.getElementById(
+            "dailyButton"
+        );
+
+
+    button.disabled = true;
+
+
+    button.textContent =
+        "تم إنجاز التحدي ✅";
+
+
+    let message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.textContent =
+        "كفو! حصلت على +100 ⭐";
+
+
+    setTimeout(function() {
+
+        message.textContent = "";
+
+    }, 3000);
+
+}
+
+
+/* =========================
+   التنقل
+========================= */
+
+function goHome() {
+
+    window.location.href =
+        "home.html";
+
+}
+
+
+function goChallenges() {
+
+    window.location.href =
+        "challenges.html";
+
+}
+
+
+function goRanking() {
+
+    window.location.href =
+        "ranking.html";
+
+}
+
+
+function goProfile() {
+
+    window.location.href =
+        "profile.html";
+
+}
+
+
+function goFriends() {
+
+    window.location.href =
+        "friends.html";
+
+}
+
+</script>
+
+
+</body>
+
+</html>

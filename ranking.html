@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الترتيب - تحداك</title>
+
+<style>
+*{box-sizing:border-box;font-family:Arial}
+body{margin:0;background:#0b0b0f;color:white;padding:20px}
+.container{max-width:500px;margin:auto}
+h1{text-align:center;margin-bottom:25px}
+.box{background:#17171d;padding:18px;border-radius:18px}
+.player{background:#25252d;padding:16px;border-radius:14px;margin:10px 0;display:flex;justify-content:space-between}
+.me{border:2px solid white}
+.back{width:100%;padding:14px;border:0;border-radius:12px;background:#25252d;color:white;font-size:16px;margin-top:15px}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🏆 الترتيب</h1>
+
+<div class="box" id="ranking">
+جاري تحميل الترتيب...
+</div>
+
+<button class="back" onclick="location.href='home.html'">
+← العودة للرئيسية
+</button>
+
+</div>
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+
+import {
+getFirestore,
+collection,
+getDocs
+}
+from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCzLovBsbbmHYnTPYLdY1XVRws2oKnnFhI",
+  authDomain: "tahaddak-852c1.firebaseapp.com",
+  projectId: "tahaddak-852c1",
+  storageBucket: "tahaddak-852c1.firebasestorage.app",
+  messagingSenderId: "518864619958",
+  appId: "1:518864619958:web:d91dc152134c9d81255917",
+  measurementId: "G-KQP0VXV27Q"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const myCode = localStorage.getItem("playerCode");
+
+async function loadRanking(){
+
+    const box = document.getElementById("ranking");
+
+    try{
+
+        const snapshot = await getDocs(
+            collection(db,"players")
+        );
+
+        let players = [];
+
+        snapshot.forEach(doc => {
+            players.push(doc.data());
+        });
+
+        players.sort((a,b) =>
+            (b.points || 0) - (a.points || 0)
+        );
+
+        box.innerHTML = "";
+
+        players.forEach((player,index) => {
+
+            const div = document.createElement("div");
+
+            div.className =
+                "player " +
+                (player.code === myCode ? "me" : "");
+
+            div.innerHTML = `
+                <span>
+                    ${index + 1}. 👤 ${player.name}
+                </span>
+
+                <strong>
+                    ⭐ ${player.points || 0}
+                </strong>
+            `;
+
+            box.appendChild(div);
+
+        });
+
+        if(players.length === 0){
+            box.innerHTML = "ما فيه لاعبين للحين.";
+        }
+
+    }catch(error){
+
+        console.error(error);
+
+        box.innerHTML =
+            "❌ تعذر تحميل الترتيب.";
+
+    }
+}
+
+loadRanking();
+
+</script>
+
+</body>
+</html>
